@@ -1,5 +1,4 @@
 # Cross-browser-UserID-and-ClientID-solution-for-Google-Tag-Manager
-<h1>Cross-browser User-ID and Client-ID solution for Google Tag Manager</h1>
 <p><strong> Due to this solution you will be able to identify one user through unlimited number of sites you own. Every user will receive unique client-id first time he/she/it visits your site. When you assign the user unique user-id from your database/CRM/eshop, you will be able to identify the same user on all your sites. </strong></p>
 
 <h2>How it works?</h2>
