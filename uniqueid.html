@@ -1,0 +1,77 @@
+<!doctype html>
+<!-- Published with courtesy of https://www.SvetZitrka.cz/ -->
+<!-- Developer: MarketingMakers.net -->
+<!-- Feel free to use, replicate and share this solution. Please always keep credits above -->
+<html lang="en">
+<head>
+ <title>Cookie UID generator</title>
+  <meta charset="utf-8" />
+ <script>
+         // if cookie exists, fill the variables
+         var cid_cookie = getCookie("clientid");
+         var uid_cookie = getCookie("useridc"); 
+         var ids = [];             // definition of a field - two IDs will be sent - client-ID (CID) assigned to all users and User-ID (UID) sent from the parent window  
+ 
+	function generateid() {
+		return Math.random().toString(36).substring(5) + '.' +  new Date().getTime() + '.' + Math.random().toString(36).substring(5);
+	 } // function for generating unique ID as random number and timestamp 
+ 
+	function setCookie(cookiename,cvalue) {
+		var d = new Date();
+		d.setTime(d.getTime() + (540*24*60*60*1000));
+		var expires = "expires="+d.toUTCString();
+		document.cookie = cookiename + "=" + cvalue + "; " + expires;
+	} // function for setting up cookie
+
+	function getCookie(cookiename) {
+		var name = cookiename + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1);
+			if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+		}
+		return "";
+	} // standard function for reading a cookie
+	
+	function getuid() {
+    if (cid_cookie) { // if exist CID cookie, fill it up 
+			ids.push(cid_cookie);
+		} else { 
+		  var cid_new = generateid(); // if not create one
+			setCookie("clientid",cid_new); // set cookie
+			ids.push(cid_new); // save value to CID
+		}
+    if (uid_cookie) {
+       ids.push(uid_cookie);
+       // console.log(ids);
+       parent.postMessage(ids,"*");
+       // console.log ("ID was sent because cookie already exists.")        
+    } else { return false; }
+    // This function read cid_cookie and uid_cookie. If cid_cookie did not exist, it is created.
+    
+  	} 
+    
+   // if variable uid_cookie is not defined, listen it from a parent, create cookie and send a value. If user-id is not defined in parent script, send only client id
+  window.addEventListener('message', function (e) { 
+               var data= e.data;
+               if(!uid_cookie && data) { 
+                    setCookie("useridc", e.data); 
+                    ids.push(e.data); 
+                    // console.log(ids);
+                    parent.postMessage(ids,"*");
+                    // console.log("ID was sent for the first time and cookie was created"); 
+              } else if (!uid_cookie) { 
+                      parent.postMessage(ids,"*"); 
+                      // console.log("No user ID defined - only client ID has been sent."); 
+                      } 
+          });
+    
+  window.addEventListener("load", function () { getuid() }, false);
+
+</script>
+</head>
+<body>
+</body>
+</html>	
+	

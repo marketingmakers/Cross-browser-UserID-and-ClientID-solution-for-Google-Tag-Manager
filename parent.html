@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- Published with courtesy of https://www.SvetZitrka.cz/ -->
+<!-- Developer: MarketingMakers.net -->
+<!-- Feel free to use, replicate and share this solution. Please always keep credits above -->
+<html lang="en">
+<head>
+ <title>Cross-browser User-ID and Client-ID solution for Google Tag Manager - Marketing Makers</title>
+ <meta charset="utf-8" />
+ <script>
+ 
+    window.dataLayer = window.dataLayer || []; // definice dataLayer
+    
+   dataLayer.push ({ "userid": "LK999" });
+    
+ </script>
+ 
+ <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TZ65RJ');</script>   <!-- USE YOUR GTM NUMBER -->
+<!-- End Google Tag Manager -->
+</head>
+<body onload="odeslatid()">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TZ65RJ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<script>
+  function odeslatid () {
+    var useriddomena_helper = JSON.stringify(dataLayer[0].userid, null, 4);  // read object from dataLayer and transfer it into text
+    if(useriddomena_helper) {                             
+    var useriddomena = useriddomena_helper.replace(/^"(.+(?="$))"$/, '$1');  // remove quotations from the text                           
+    var domena = window.location.hostname; // get actual hostname 
+    var message = useriddomena+"_"+domena; // create userid as connection of user-id from parent and hostname
+    var ifr = document.getElementById("useridframe");  // get ID of child frame
+    ifr.contentWindow.postMessage(message,"*"); // send user-id to child  
+  }   else {
+          var message;
+          var ifr = document.getElementById("useridframe");  // get ID of child frame
+          ifr.contentWindow.postMessage(message,"*"); // send empty message to a child  
+  }
+};  
+
+	 // Create IE + others compatible event handler
+  	var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+  	var eventer = window[eventMethod];
+  	var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+  	// Listen to message from child window
+  	eventer(messageEvent,function(e) {
+  	  dataLayer.push({ "uniqueid": e.data, "event": "trackid" });
+  	  // console.log("Unique ID hass been recorded" + e.data);
+  	},false);
+    </script>
+
+<!-- Child script is included via iframe. You may use other technologies like Ajax etc. Please share your solution 
+do not forget to download the uniqueid.html to your local storage - this placement do not need to be supported -->
+<iframe src="https://resources.marketingmakers.net/useriddemo/uniqueid.html" width="1" height="1" style="display: none;" id="useridframe"></iframe>
+</body>
+</html>
